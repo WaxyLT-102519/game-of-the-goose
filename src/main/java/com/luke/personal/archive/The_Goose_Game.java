@@ -1,4 +1,4 @@
-package archive;
+package com.luke.personal.archive;
 
 import java.util.*;
 public class The_Goose_Game 

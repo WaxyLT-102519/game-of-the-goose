@@ -1,4 +1,4 @@
-package archive;
+package com.luke.personal.archive;
 
 /*
  * This class represents the different effects of the 

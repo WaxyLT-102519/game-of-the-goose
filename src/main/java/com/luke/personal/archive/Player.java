@@ -1,4 +1,4 @@
-package archive;
+package com.luke.personal.archive;
 
 public class Player extends Position
 {

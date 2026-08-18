@@ -1,4 +1,4 @@
-package archive;
+package com.luke.personal.archive;
 
 public class WellPrisonSpace extends BoardSpace
 {

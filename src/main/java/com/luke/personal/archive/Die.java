@@ -1,4 +1,4 @@
-package archive;//********************************************************************
+package com.luke.personal.archive;//********************************************************************
 //  archive.Die.java       Author: Lewis/Loftus
 //
 //  Represents one die (singular of dice) with faces showing values

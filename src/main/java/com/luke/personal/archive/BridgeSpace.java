@@ -1,4 +1,4 @@
-package archive;
+package com.luke.personal.archive;
 
 public class BridgeSpace extends BoardSpace
 {
