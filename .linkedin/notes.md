@@ -1,3 +1,7 @@
+# Class Notes
+These notes detail all the problems I see in the original project code. I will
+list each class and describe what's going on that would be worth fixing, as
+well as if fixing it would reveal any lessons worth teaching to LinkedIn.
 ## Die
 - This should just be a utility that exposes a `.roll()` function, no private
 state or public setters (what does that even mean?)
@@ -88,3 +92,53 @@ player1 is passed in twice
 - Everything is in a really big do-while loop
 - `.playTheBoard()` is only useful as a wrapper function because `.onLanding()` is not a
 good method
+
+# Core Issues
+This section details the biggest things that are causing this program to suffer, and
+what should be addressed in order to fix it
+## Bad Inheritance Structure
+It's deep and nonsensical. Somehow, a `WellPrisonSpace` is a `BoardSpace`, which is a `Player`
+(who can't move), which is a `Position` (that has a name and landing callback). So each concrete
+space is 4 layers deep in an inheritance structure.
+
+The `onLanding()` method only works because we never found out how to break it, but because 
+of the inheritance structure, the types of the allowed arguments can be completely nonsensical.
+
+A player's position can be simply defined as an int representing an index of a space in an
+immutable list of spaces. No need for the parent class.
+
+What happens to a player should be determined by a callback on that space, so there is reason
+to keep a parent `BoardSpace` with its implementors. However, some of the concrete classes could
+be consolidated. For example, bridge, death, and maze all move a player to a set position on 
+the board, so we could just turn that into a `RelocatingSpace`.
+
+## Violates Liskov Substitution Principle
+The `WellPrisonSpace` shows a clear violation of LSP, and a not-so-clear violation is in the
+absence of a `StandardSpace` -- one that just does nothing. If we still need to use a switch
+statement after creating a polymorphic structure, then why did we make it?
+
+`.onLanding(BoardSpace[], Player, Player, int)` lies about what it really needs, since not
+every space cares about player2 on landing. We also shouldn't be passing in the array of spaces,
+since the game board should be a part of some global state. 
+
+## Lack of Clear Boundaries
+While the names of classes do clearly label the different parts of the game, their code leads
+to a lot of confusion. Everyone is allowed to move players and change their turns. The main
+driver needs to handle a lot of logic that could be further extracted into its own classes,
+such as initializing the players and game board, checking if any player has won yet, or even
+checking if a player rolled a special number on the first roll.
+
+Seeing a messy implementation doesn't really lead me to the clean one so obviously. I still
+have questions regarding who really has the right to do what. For example, who should be
+responsible for knowing which players are on which spaces? Should a player know which space
+it's on, or should a space know which player is on it? Or should neither know, and player
+placement is handled by a separate object? It makes sense that spaces would be responsible
+for the actions that happen to a player when they land there. but then how would be 
+fix the `WellPrisonSpace`, which needs to know if a player is on the space and if another
+is arriving?
+
+Everyone ends up setting the player's position, and everyone can set the player's turn.
+The turn order can be very complex. There should be one object responsible for tracking
+player's positions and moving them, and everyone has to go through that object. Then there
+should be another object solely focused on the turn order, and everyone needs to go through
+there in order to affect who goes next.
