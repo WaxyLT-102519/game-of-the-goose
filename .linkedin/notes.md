@@ -4,7 +4,7 @@ list each class and describe what's going on that would be worth fixing, as
 well as if fixing it would reveal any lessons worth teaching to LinkedIn.
 ## Die
 - This should just be a utility that exposes a `.roll()` function, no private
-state or public setters (what does that even mean?)
+state or public setters (what does that even mean to have a setter?)
 
 ## Position
 - Supposed to encapsulate a position on the board, but that could be done
@@ -142,3 +142,42 @@ The turn order can be very complex. There should be one object responsible for t
 player's positions and moving them, and everyone has to go through that object. Then there
 should be another object solely focused on the turn order, and everyone needs to go through
 there in order to affect who goes next.
+
+# Going Forward
+While not necessary for this specific project, I want to challenge myself to create a fully
+flexible GooseGame. To me, this means:
+- Any number of players
+- Any number of spaces
+- Any space can be a special space, not just the defaults
+- Completely automatic gameplay after the start (no terminal prompt, just a game log)
+- REST-lite: starting a game requires a JSON configuration, and the output of the game
+is an object which could be sent through a REST api.
+  - This will not be a spring boot app though, just a terminal app. But the inputs and
+  outputs will behave like it
+
+Here are some things that I would need to change in order to accommodate these new requirements:
+- player turn cannot be determined by an internal countdown clock
+- skipping turns needs to work differently
+- naming players needs to be efficient
+- having any number of spaces means we need to make sure that we account for the special
+starting rules, since there are automatic wins in the original game.
+  - Maybe make it so that goose spaces are still spread out evenly across the board, then
+  just specify the spread
+  - Allow users to customize the board before the game starts, and be able to see it.
+  - allow users to set up the instant win conditions
+- spaces do not know where they are on the game board. So when a space relocates a player,
+that is adjustable through input
+  - the landing callback needs to accommodate this
+- There will be a brief setup portion where users will be able to configure the game using
+terminal prompts. the end result of this initializer will be a record with the configurations.
+  - or a couple records, it might not be convenient to store the whole game board here
+- Create a GameBoard facade that will track the internal game state between turns. A game will
+return a historical model of what happened on every turn and how they started and ended.
+  - player positions before the dice roll
+  - whose turn it was
+  - what the dice roll was
+  - the space they landed on
+  - what happened to them on that space
+  - player positions after the landing callback
+- Now different parts of the game can all just add their own input to the global game state
+without needing to all be capable of every action.
