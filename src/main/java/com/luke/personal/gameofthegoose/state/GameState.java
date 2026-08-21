@@ -7,6 +7,6 @@ public record GameState(
         int playerTurn,
         int diceRollValue,
         BoardSpace playerDestination,
-        PlayerPositions afterLandingCallback
+        PlayerPositions afterSpaceEffect
 ) {
 }
