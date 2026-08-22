@@ -10,10 +10,6 @@ public class PlayerSkips {
 
     private final Map<Player, Integer> skipCounters;
 
-    public PlayerSkips(Map<Player, Integer> skipCounters) {
-        this.skipCounters = skipCounters;
-    }
-
     public PlayerSkips(List<Player> players) {
         this.skipCounters = players.stream()
                 .collect(Collectors.toMap(player -> player, player -> 0));

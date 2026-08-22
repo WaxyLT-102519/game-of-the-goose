@@ -12,14 +12,30 @@ public final class CircularCounter {
         this.current = minInclusive;
     }
 
+    public long range() {
+        return ((long) maxExclusive) - ((long) minInclusive);
+    }
+
     public int next() {
-        current += 1;
+        int nextValue;
 
         if (current == maxExclusive) {
-            current = minInclusive;
+            nextValue = minInclusive;
+        } else {
+            nextValue = current;
+            current++;
         }
 
-        return current;
+        return nextValue;
+    }
+
+
+    public String toString() {
+        return "(%d, %d, %d)".formatted(minInclusive, current, maxExclusive);
+    }
+
+    public static CircularCounter fromZeroTo(int maxExclusive) {
+        return CircularCounter.from(0).to(maxExclusive);
     }
 
     public static To from(int minInclusive) {
@@ -35,6 +51,11 @@ public final class CircularCounter {
         }
 
         public CircularCounter to(int maxExclusive) {
+            long range = ((long) maxExclusive) - ((long) minInclusive);
+            if (range > Integer.MAX_VALUE) {
+                throw new IllegalStateException("Cannot count within a range greater than Integer.MAX_VALUE");
+            }
+
             return new CircularCounter(minInclusive, maxExclusive);
         }
     }

@@ -13,7 +13,7 @@ public class TurnOrder {
 
     public TurnOrder(List<Player> players) {
         this.players = List.copyOf(players);
-        this.counter = CircularCounter.from(0).to(players.size());
+        this.counter = CircularCounter.fromZeroTo(players.size());
         this.playerSkips = new PlayerSkips(players);
     }
 
